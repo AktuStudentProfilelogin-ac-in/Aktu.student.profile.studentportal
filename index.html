@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="site-title-tag">AKTU ERP Portal</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(rgba(210, 225, 235, 0.85), rgba(210, 225, 235, 0.85)), 
+                        url('https://images.unsplash.com/photo-1562774053-701939374585?q=80&w=1000') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: #ffffff;
+            width: 100%;
+            max-width: 420px;
+            padding: 30px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+
+        .logo-placeholder {
+            width: 80px;
+            height: 80px;
+            background: #800000;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin: 0 auto 15px auto;
+            font-size: 24px;
+            overflow: hidden;
+        }
+        .logo-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        h2 {
+            color: #333333;
+            margin-bottom: 25px;
+            font-size: 22px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        input[type="text"], input[type="password"], input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 2px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .captcha-box {
+            background: #f9f9f9;
+            border: 1px solid #d3d3d3;
+            padding: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 10px;
+            font-size: 13px;
+        }
+
+        .btn {
+            width: 100%;
+            background: #800000;
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background: #600000;
+        }
+
+        .btn-secondary {
+            background: #555;
+            margin-top: 10px;
+        }
+        .btn-secondary:hover {
+            background: #333;
+        }
+
+        .btn-danger {
+            background: #d9534f;
+            margin-top: 5px;
+        }
+        .btn-danger:hover {
+            background: #c9302c;
+        }
+
+        .footer-note {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .footer-note a {
+            color: #800000;
+            text-decoration: none;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .dashboard {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            padding: 25px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+
+        .nav-tabs {
+            display: flex;
+            border-bottom: 2px solid #800000;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            background: #f1f1f1;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .tab-btn.active {
+            background: #800000;
+            color: white;
+        }
+
+        .content-area {
+            min-height: 250px;
+            padding: 15px;
+            border: 1px solid #eee;
+            background: #fafafa;
+        }
+
+        .profile-img {
+            max-width: 200px;
+            max-height: 200px;
+            object-fit: cover;
+            border: 3px solid #800000;
+            margin-top: 15px;
+        }
+
+        object {
+            width: 100%;
+            height: 450px;
+            border: 1px solid #ccc;
+        }
+
+        .admin-box {
+            text-align: left;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed #ccc;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. LOGIN CARD SECTION -->
+    <div id="login-card" class="container">
+        <div class="logo-placeholder" id="portal-logo-view">AKTU</div>
+        <h2 id="portal-name-view">AKTU ERP Portal</h2>
+        
+        <div class="form-group">
+            <input type="text" id="username" placeholder="रोल नंबर / यूजर आईडी (या Admin)">
+        </div>
+        <div class="form-group">
+            <input type="password" id="password" placeholder="पासवर्ड">
+        </div>
+
+        <div class="captcha-box">
+            <input type="checkbox" id="captcha" style="transform: scale(1.2); cursor:pointer;">
+            <label for="captcha" style="cursor:pointer; color:#555;">मैं रोबोट नहीं हूँ (reCAPTCHA)</label>
+        </div>
+
+        <button class="btn" onclick="handleLogin()">लॉगिन करें</button>
+
+        <!-- आपातकालीन लॉगिन लिंक (अगर ब्राउज़र बटन ब्लॉक कर रहा हो) -->
+        <p style="margin-top: 15px; font-size: 11px;">
+            <a href="#" onclick="forceAdminOpen()" style="color: #999; text-decoration: underline;">Direct Admin Login (Emergency Bypass)</a>
+        </p>
+
+        <div class="footer-note">
+            <p><a href="#">फॉरगॉट पासवर्ड?</a></p>
+            <p style="margin-top: 10px;">For any other queries contact:<br><strong>aktu.result.erp.portal@gmail.com</strong></p>
+        </div>
+    </div>
+
+    <!-- 2. STUDENT DASHBOARD SECTION -->
+    <div id="student-dashboard" class="container dashboard hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3 id="dash-student-title">Student Dashboard</h3>
+            <button class="btn" style="width: auto; padding: 5px 15px;" onclick="logout()">लॉगआउट</button>
+        </div>
+        
+        <div class="nav-tabs">
+            <button id="btn-profile" class="tab-btn active" onclick="switchTab('profile')">Student Profile</button>
+            <button id="btn-result" class="tab-btn" onclick="switchTab('result')">Result View</button>
+        </div>
+
+        <div class="content-area">
+            <div id="profile-content">
+                <h4>छात्र प्रोफ़ाइल (Student Profile)</h4>
+                <div id="profile-status">कोई फोटो अपलोड नहीं है।</div>
+                <img id="display-profile-pic" class="profile-img hidden" src="" alt="Student Profile">
+            </div>
+            <div id="result-content" class="hidden">
+                <h4>परीक्षा परिणाम (Result View)</h4>
+                <div id="result-status">कोई पीडीएफ परिणाम अपलोड नहीं है।</div>
+                <div id="pdf-container" class="hidden"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. ADMIN DASHBOARD SECTION -->
+    <div id="admin-dashboard" class="container dashboard hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3>Admin Panel Control</h3>
+            <button class="btn" style="width: auto; padding: 5px 15px;" onclick="logout()">लॉगआउट</button>
+        </div>
+        <hr><br>
+
+        <!-- सिस्टम रीसेट बटन -->
+        <button class="btn btn-danger" style="background:#f0ad4e; margin-bottom: 15px;" onclick="clearAllData()">पूरा पोर्टल रीसेट करें (क्लियर डेटा)</button>
+
+        <div class="admin-box">
+            <h4>1. पोर्टल सेटिंग्स (Name & Logo)</h4>
+            <div class="form-group" style="margin-top:10px;">
+                <label>वेबसाइट का नाम:</label>
+                <input type="text" id="input-site-name" placeholder="नया नाम दर्ज करें">
+            </div>
+            <div class="form-group">
+                <label>लोगो इमेज (अपलोड):</label>
+                <input type="file" id="input-site-logo" accept="image/*">
+            </div>
+            <button class="btn btn-secondary" onclick="saveGlobalSettings()">पोर्टल सेटिंग्स सेव करें</button>
+        </div>
+
+        <div class="admin-box" style="margin-top:25px;">
+            <h4>2. स्टूडेंट डेटा मैनेजमेंट</h4>
+            <div class="form-group" style="margin-top:10px;">
+                <label>स्टूडेंट का रोल नंबर:</label>
+                <input type="text" id="stud-roll" placeholder="उदा. 12345">
+            </div>
+            <div class="form-group">
+                <label>स्टूडेंट का पासवर्ड:</label>
+                <input type="text" id="stud-pass" placeholder="उदा. studpass">
+            </div>
+            <div class="form-group">
+                <label>स्टूडेंट की फोटो अपलोड करें:</label>
+                <input type="file" id="stud-photo" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label>स्टूडेंट का रिजल्ट (PDF) अपलोड करें:</label>
+                <input type="file" id="stud-pdf" accept="application/pdf">
+            </div>
+            <button class="btn" onclick="saveStudentData()">स्टूडेंट डेटा अपलोड/सेव करें</button>
+        </div>
+
+        <div class="admin-box" style="margin-top:25px; border-top: 1px solid red;">
+            <h4 style="color: #c9302c;">3. स्टूडेंट अकाउंट डिलीट करें</h4>
+            <div class="form-group" style="margin-top:10px;">
+                <label>डिलीट करने वाले स्टूडेंट का रोल नंबर:</label>
+                <input type="text" id="delete-stud-roll" placeholder="उदा. 12345">
+            </div>
+            <button class="btn btn-danger" onclick="deleteStudentData()">स्टूडेंट डेटा हमेशा के लिए डिलीट करें</button>
+        </div>
+    </div>
+
+    <script>
+        // लोड सेटिंग्स - पूरी तरह से सेफ मोड में
+        window.onload = function() {
+            try {
+                loadGlobalSettings();
+            } catch (e) {
+                console.log("डिफ़ॉल्ट सेटिंग्स लोड की गईं।");
+            }
+        };
+
+        function loadGlobalSettings() {
+            let savedName = "AKTU ERP Portal";
+            let savedLogo = null;
+            
+            try {
+                savedName = localStorage.getItem('siteName') || "AKTU ERP Portal";
+                savedLogo = localStorage.getItem('siteLogo');
+            } catch(e) {}
+
+            document.getElementById('portal-name-view').innerText = savedName;
+            document.getElementById('site-title-tag').innerText = savedName;
+            document.getElementById('input-site-name').value = savedName;
+
+            if(savedLogo) {
+                document.getElementById('portal-logo-view').innerHTML = `<img src="${savedLogo}" alt="Logo">`;
+            } else {
+                document.getElementById('portal-logo-view').innerText = "AKTU";
+            }
+        }
+
+        function forceAdminOpen() {
+            // डायरेक्ट बाईपास फंक्शन
+            document.getElementById('login-card').classList.add('hidden');
+            document.getElementById('admin-dashboard').classList.remove('hidden');
+        }
+
+        function handleLogin() {
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value.trim();
+            const captchaChecked = document.getElementById('captcha').checked;
+
+            if(!user || !pass) {
+                alert("कृपया यूजर आईडी और पासवर्ड डालें!");
+                return;
+            }
+            if(!captchaChecked) {
+                alert("कृपया 'मैं रोबोट नहीं हूँ' बॉक्स को टिक करें!");
+                return;
+            }
+
+            // 1. एडमिन लॉगिन चेक
+            if(user === "Admin" && pass === "Manvendra#1234") {
+                forceAdminOpen();
+                return;
+            }
+
+            // 2. स्टूडेंट लॉगिन चेक
+            try {
+                const studentDataStr = localStorage.getItem('student_' + user);
+                if(studentDataStr) {
+                    const studentData = JSON.parse(studentDataStr);
+                    if(studentData.password === pass) {
+                        document.getElementById('login-card').classList.add('hidden');
+                        document.getElementById('student-dashboard').classList.remove('hidden');
+                        document.getElementById('dash-student-title').innerText = "रोल नंबर: " + user;
+                        setupStudentDashboard(studentData);
+                    } else {
+                        alert("गलत पासवर्ड!");
+                    }
+                } else {
+                    alert("यह रोल नंबर मौजूद नहीं है।");
+                }
+            } catch (error) {
+                alert("लॉगिन एरर! नीचे दिए डायरेक्ट लिंक से एडमिन खोलें और रीसेट करें।");
+            }
+        }
+
+        function saveGlobalSettings() {
+            const nameInput = document.getElementById('input-site-name').value;
+            const logoFile = document.getElementById('input-site-logo').files[0];
+
+            try {
+                if(nameInput) localStorage.setItem('siteName', nameInput);
+            } catch(e){}
+
+            if(logoFile) {
+                const reader = new FileReader();
+                reader.onloadend = function() {
+                    try {
+                        localStorage.setItem('siteLogo', reader.result);
+                        loadGlobalSettings();
+                        alert("सेटिंग्स सेव हो गईं!");
+                    } catch(e){ alert("लोगो फ़ाइल बहुत बड़ी है!"); }
+                }
+                reader.readAsDataURL(logoFile);
+            } else {
+                loadGlobalSettings();
+                alert("नाम अपडेट हो गया!");
+            }
+        }
+
+        function saveStudentData() {
+            const roll = document.getElementById('stud-roll').value.trim();
+            const pass = document.getElementById('stud-pass').value.trim();
+            const photoFile = document.getElementById('stud-photo').files[0];
+            const pdfFile = document.getElementById('stud-pdf').files[0];
+
+            if(!roll || !pass) {
+                alert("कृपया रोल नंबर और पासवर्ड भरें!");
+                return;
+            }
+
+            let studentObj = { password: pass, photo: "", pdf: "" };
+            
+            try {
+                let existingData = localStorage.getItem('student_' + roll);
+                if(existingData) {
+                    studentObj = JSON.parse(existingData);
+                    studentObj.password = pass; 
+                }
+            } catch(e) {}
+
+            const saveToLocalStorage = () => {
+                try {
+                    localStorage.setItem('student_' + roll, JSON.stringify(studentObj));
+                    alert(`छात्र ${roll} का डेटा सुरक्षित हो गया!`);
+                    document.getElementById('stud-roll').value = "";
+                    document.getElementById('stud-pass').value = "";
+                    document.getElementById('stud-photo').value = "";
+                    document.getElementById('stud-pdf').value = "";
+                } catch(err) {
+                    alert("एरर: फाइल साइज बहुत बड़ा है, छोटी साइज की PDF/Photo अपलोड करें।");
+                }
+            };
+
+            if (photoFile && pdfFile) {
+                let r1 = new FileReader(), r2 = new FileReader();
+                r1.onload = function(e) {
+                    studentObj.photo = e.target.result;
+                    r2.readAsDataURL(pdfFile);
+                }
+                r2.onload = function(e) {
+                    studentObj.pdf = e.target.result;
+                    saveToLocalStorage();
+                }
+                r1.readAsDataURL(photoFile);
+            } else if (photoFile) {
+                let r1 = new FileReader();
+                r1.onload = function(e) {
+                    studentObj.photo = e.target.result;
+                    saveToLocalStorage();
+                }
+                r1.readAsDataURL(photoFile);
+            } else if (pdfFile) {
+                let r2 = new FileReader();
+                r2.onload = function(e) {
+                    studentObj.pdf = e.target.result;
+                    saveToLocalStorage();
+                }
+                r2.readAsDataURL(pdfFile);
+            } else {
+                saveToLocalStorage();
+            }
+        }
+
+        function deleteStudentData() {
+            const roll = document.getElementById('delete-stud-roll').value.trim();
+            if(!roll) return alert("रोल नंबर दर्ज करें!");
+
+            try {
+                if(localStorage.getItem('student_' + roll)) {
+                    if(confirm("क्या आप डिलीट करना चाहते हैं?")) {
+                        localStorage.removeItem('student_' + roll);
+                        alert("डेटा डिलीट हो गया।");
+                        document.getElementById('delete-stud-roll').value = "";
+                    }
+                } else {
+                    alert("रोल नंबर नहीं मिला।");
+                }
+            } catch(e){}
+        }
+
+        function clearAllData() {
+            if(confirm("क्या आप पूरा डेटा साफ़ करना चाहते हैं?")) {
+                try { localStorage.clear(); } catch(e){}
+                alert("पोर्टल साफ़ कर दिया गया है।");
+                location.reload();
+            }
+        }
+
+        function base64ToBlobUrl(base64Data) {
+            try {
+                if(!base64Data) return null;
+                const parts = base64Data.split(';base64,');
+                if(parts.length < 2) return null;
+                const contentType = parts[0].split(':')[1];
+                const raw = window.atob(parts[1]);
+                const rawLength = raw.length;
+                const uInt8Array = new Uint8Array(rawLength);
+                for (let i = 0; i < rawLength; ++i) {
+                    uInt8Array[i] = raw.charCodeAt(i);
+                }
+                return URL.createObjectURL(new Blob([uInt8Array], {type: contentType}));
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function setupStudentDashboard(data) {
+            if(data.photo) {
+                document.getElementById('display-profile-pic').src = data.photo;
+                document.getElementById('display-profile-pic').classList.remove('hidden');
+                document.getElementById('profile-status').classList.add('hidden');
+            } else {
+                document.getElementById('display-profile-pic').classList.add('hidden');
+                document.getElementById('profile-status').classList.remove('hidden');
+            }
+
+            const pdfContainer = document.getElementById('pdf-container');
+            if(data.pdf) {
+                const blobUrl = base64ToBlobUrl(data.pdf);
+                if(blobUrl) {
+                    pdfContainer.innerHTML = `<object data="${blobUrl}" type="application/pdf">
+                        <embed src="${blobUrl}" type="application/pdf" />
+                        <p>PDF डाउनलोड करें: <a href="${blobUrl}" target="_blank">यहाँ क्लिक करें</a></p>
+                    </object>`;
+                    pdfContainer.classList.remove('hidden');
+                    document.getElementById('result-status').classList.add('hidden');
+                } else {
+                    document.getElementById('result-status').innerText = "रेंडर एरर।";
+                }
+            } else {
+                pdfContainer.classList.add('hidden');
+                document.getElementById('result-status').classList.remove('hidden');
+            }
+            switchTab('profile');
+        }
+
+        function switchTab(tabName) {
+            if(tabName === 'profile') {
+                document.getElementById('profile-content').classList.remo
