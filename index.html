@@ -105,16 +105,10 @@
             background: #555;
             margin-top: 10px;
         }
-        .btn-secondary:hover {
-            background: #333;
-        }
 
         .btn-danger {
             background: #d9534f;
             margin-top: 5px;
-        }
-        .btn-danger:hover {
-            background: #c9302c;
         }
 
         .footer-note {
@@ -128,6 +122,7 @@
             text-decoration: none;
         }
 
+        /* डिस्प्ले मैनेजमेंट के लिए आसान क्लास */
         .hidden {
             display: none !important;
         }
@@ -209,11 +204,13 @@
             <label for="captcha" style="cursor:pointer; color:#555;">मैं रोबोट नहीं हूँ (reCAPTCHA)</label>
         </div>
 
-        <button class="btn" onclick="handleLogin()">लॉगिन करें</button>
+        <button class="btn" id="login-submit-btn">लॉगिन करें</button>
 
-        <!-- आपातकालीन लॉगिन लिंक (अगर ब्राउज़र बटन ब्लॉक कर रहा हो) -->
+        <!-- इमरजेंसी बटन - अगर स्क्रिप्ट बिल्कुल काम न करे, तो यह CSS को चेंज करके एडमिन पैनल खोल देगा -->
         <p style="margin-top: 15px; font-size: 11px;">
-            <a href="#" onclick="forceAdminOpen()" style="color: #999; text-decoration: underline;">Direct Admin Login (Emergency Bypass)</a>
+            <button onclick="document.getElementById('login-card').style.display='none'; document.getElementById('admin-dashboard').style.display='block';" style="background:none; border:none; color:#999; text-decoration:underline; cursor:pointer;">
+                Direct Admin Panel Link (Emergency Bypass)
+            </button>
         </p>
 
         <div class="footer-note">
@@ -223,10 +220,10 @@
     </div>
 
     <!-- 2. STUDENT DASHBOARD SECTION -->
-    <div id="student-dashboard" class="container dashboard hidden">
+    <div id="student-dashboard" class="container dashboard" style="display: none;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <h3 id="dash-student-title">Student Dashboard</h3>
-            <button class="btn" style="width: auto; padding: 5px 15px;" onclick="logout()">लॉगआउट</button>
+            <button class="btn" style="width: auto; padding: 5px 15px;" onclick="location.reload()">लॉगआउट</button>
         </div>
         
         <div class="nav-tabs">
@@ -249,15 +246,14 @@
     </div>
 
     <!-- 3. ADMIN DASHBOARD SECTION -->
-    <div id="admin-dashboard" class="container dashboard hidden">
+    <div id="admin-dashboard" class="container dashboard" style="display: none;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <h3>Admin Panel Control</h3>
-            <button class="btn" style="width: auto; padding: 5px 15px;" onclick="logout()">लॉगआउट</button>
+            <button class="btn" style="width: auto; padding: 5px 15px;" onclick="location.reload()">लॉगआउट</button>
         </div>
         <hr><br>
 
-        <!-- सिस्टम रीसेट बटन -->
-        <button class="btn btn-danger" style="background:#f0ad4e; margin-bottom: 15px;" onclick="clearAllData()">पूरा पोर्टल रीसेट करें (क्लियर डेटा)</button>
+        <button class="btn btn-danger" style="background:#f0ad4e; margin-bottom: 15px;" onclick="localStorage.clear(); alert('पूरा पोर्टल रीसेट हो गया!'); location.reload();">पूरा पोर्टल रीसेट करें (क्लियर डेटा)</button>
 
         <div class="admin-box">
             <h4>1. पोर्टल सेटिंग्स (Name & Logo)</h4>
@@ -299,47 +295,13 @@
                 <label>डिलीट करने वाले स्टूडेंट का रोल नंबर:</label>
                 <input type="text" id="delete-stud-roll" placeholder="उदा. 12345">
             </div>
-            <button class="btn btn-danger" onclick="deleteStudentData()">स्टूडेंट डेटा हमेशा के लिए डिलीट करें</button>
+            <button class="btn btn-danger" style="background:#d9534f;" onclick="deleteStudentData()">स्टूडेंट डेटा हमेशा के लिए डिलीट करें</button>
         </div>
     </div>
 
     <script>
-        // लोड सेटिंग्स - पूरी तरह से सेफ मोड में
-        window.onload = function() {
-            try {
-                loadGlobalSettings();
-            } catch (e) {
-                console.log("डिफ़ॉल्ट सेटिंग्स लोड की गईं।");
-            }
-        };
-
-        function loadGlobalSettings() {
-            let savedName = "AKTU ERP Portal";
-            let savedLogo = null;
-            
-            try {
-                savedName = localStorage.getItem('siteName') || "AKTU ERP Portal";
-                savedLogo = localStorage.getItem('siteLogo');
-            } catch(e) {}
-
-            document.getElementById('portal-name-view').innerText = savedName;
-            document.getElementById('site-title-tag').innerText = savedName;
-            document.getElementById('input-site-name').value = savedName;
-
-            if(savedLogo) {
-                document.getElementById('portal-logo-view').innerHTML = `<img src="${savedLogo}" alt="Logo">`;
-            } else {
-                document.getElementById('portal-logo-view').innerText = "AKTU";
-            }
-        }
-
-        function forceAdminOpen() {
-            // डायरेक्ट बाईपास फंक्शन
-            document.getElementById('login-card').classList.add('hidden');
-            document.getElementById('admin-dashboard').classList.remove('hidden');
-        }
-
-        function handleLogin() {
+        // सीधे तौर पर बटन को इवेंट असाइन करना ताकि लाइव सर्वर पर क्रैश न हो
+        document.getElementById('login-submit-btn').onclick = function() {
             const user = document.getElementById('username').value.trim();
             const pass = document.getElementById('password').value.trim();
             const captchaChecked = document.getElementById('captcha').checked;
@@ -349,24 +311,23 @@
                 return;
             }
             if(!captchaChecked) {
-                alert("कृपया 'मैं रोबोट नहीं हूँ' बॉक्स को टिक करें!");
+                alert("कृपया रीकैप्चा टिक करें!");
                 return;
             }
 
-            // 1. एडमिन लॉगिन चेक
             if(user === "Admin" && pass === "Manvendra#1234") {
-                forceAdminOpen();
+                document.getElementById('login-card').style.display = 'none';
+                document.getElementById('admin-dashboard').style.display = 'block';
                 return;
             }
 
-            // 2. स्टूडेंट लॉगिन चेक
             try {
                 const studentDataStr = localStorage.getItem('student_' + user);
                 if(studentDataStr) {
                     const studentData = JSON.parse(studentDataStr);
                     if(studentData.password === pass) {
-                        document.getElementById('login-card').classList.add('hidden');
-                        document.getElementById('student-dashboard').classList.remove('hidden');
+                        document.getElementById('login-card').style.display = 'none';
+                        document.getElementById('student-dashboard').style.display = 'block';
                         document.getElementById('dash-student-title').innerText = "रोल नंबर: " + user;
                         setupStudentDashboard(studentData);
                     } else {
@@ -376,14 +337,23 @@
                     alert("यह रोल नंबर मौजूद नहीं है।");
                 }
             } catch (error) {
-                alert("लॉगिन एरर! नीचे दिए डायरेक्ट लिंक से एडमिन खोलें और रीसेट करें।");
+                alert("लॉगिन एरर! नीचे दिए डायरेक्ट बटन का उपयोग करें।");
             }
-        }
+        };
+
+        // डिफ़ॉल्ट लोडिंग सेटिंग्स
+        try {
+            const savedName = localStorage.getItem('siteName') || "AKTU ERP Portal";
+            const savedLogo = localStorage.getItem('siteLogo');
+            document.getElementById('portal-name-view').innerText = savedName;
+            document.getElementById('site-title-tag').innerText = savedName;
+            document.getElementById('input-site-name').value = savedName;
+            if(savedLogo) document.getElementById('portal-logo-view').innerHTML = `<img src="${savedLogo}">`;
+        } catch(e){}
 
         function saveGlobalSettings() {
             const nameInput = document.getElementById('input-site-name').value;
             const logoFile = document.getElementById('input-site-logo').files[0];
-
             try {
                 if(nameInput) localStorage.setItem('siteName', nameInput);
             } catch(e){}
@@ -393,14 +363,14 @@
                 reader.onloadend = function() {
                     try {
                         localStorage.setItem('siteLogo', reader.result);
-                        loadGlobalSettings();
-                        alert("सेटिंग्स सेव हो गईं!");
-                    } catch(e){ alert("लोगो फ़ाइल बहुत बड़ी है!"); }
+                        alert("सेटिंग्स सेव हो गईं! पेज रीलोड करें।");
+                        location.reload();
+                    } catch(e){ alert("फ़ाइल बहुत बड़ी है!"); }
                 }
                 reader.readAsDataURL(logoFile);
             } else {
-                loadGlobalSettings();
                 alert("नाम अपडेट हो गया!");
+                location.reload();
             }
         }
 
@@ -410,105 +380,47 @@
             const photoFile = document.getElementById('stud-photo').files[0];
             const pdfFile = document.getElementById('stud-pdf').files[0];
 
-            if(!roll || !pass) {
-                alert("कृपया रोल नंबर और पासवर्ड भरें!");
-                return;
-            }
+            if(!roll || !pass) return alert("रोल नंबर और पासवर्ड भरें!");
 
             let studentObj = { password: pass, photo: "", pdf: "" };
-            
             try {
-                let existingData = localStorage.getItem('student_' + roll);
-                if(existingData) {
-                    studentObj = JSON.parse(existingData);
-                    studentObj.password = pass; 
-                }
-            } catch(e) {}
+                let existing = localStorage.getItem('student_' + roll);
+                if(existing) studentObj = JSON.parse(existing);
+            } catch(e){}
+            studentObj.password = pass;
 
-            const saveToLocalStorage = () => {
+            const finalSave = () => {
                 try {
                     localStorage.setItem('student_' + roll, JSON.stringify(studentObj));
-                    alert(`छात्र ${roll} का डेटा सुरक्षित हो गया!`);
-                    document.getElementById('stud-roll').value = "";
-                    document.getElementById('stud-pass').value = "";
-                    document.getElementById('stud-photo').value = "";
-                    document.getElementById('stud-pdf').value = "";
-                } catch(err) {
-                    alert("एरर: फाइल साइज बहुत बड़ा है, छोटी साइज की PDF/Photo अपलोड करें।");
-                }
+                    alert(`छात्र ${roll} का डेटा सुरक्षित हुआ!`);
+                } catch(e){ alert("फ़ाइल साइज बहुत बड़ा है!"); }
             };
 
-            if (photoFile && pdfFile) {
+            if(photoFile && pdfFile) {
                 let r1 = new FileReader(), r2 = new FileReader();
-                r1.onload = function(e) {
-                    studentObj.photo = e.target.result;
-                    r2.readAsDataURL(pdfFile);
-                }
-                r2.onload = function(e) {
-                    studentObj.pdf = e.target.result;
-                    saveToLocalStorage();
-                }
+                r1.onload = function(e){ studentObj.photo = e.target.result; r2.readAsDataURL(pdfFile); }
+                r2.onload = function(e){ studentObj.pdf = e.target.result; finalSave(); }
                 r1.readAsDataURL(photoFile);
-            } else if (photoFile) {
+            } else if(photoFile) {
                 let r1 = new FileReader();
-                r1.onload = function(e) {
-                    studentObj.photo = e.target.result;
-                    saveToLocalStorage();
-                }
+                r1.onload = function(e){ studentObj.photo = e.target.result; finalSave(); }
                 r1.readAsDataURL(photoFile);
-            } else if (pdfFile) {
+            } else if(pdfFile) {
                 let r2 = new FileReader();
-                r2.onload = function(e) {
-                    studentObj.pdf = e.target.result;
-                    saveToLocalStorage();
-                }
+                r2.onload = function(e){ studentObj.pdf = e.target.result; finalSave(); }
                 r2.readAsDataURL(pdfFile);
             } else {
-                saveToLocalStorage();
+                finalSave();
             }
         }
 
         function deleteStudentData() {
             const roll = document.getElementById('delete-stud-roll').value.trim();
-            if(!roll) return alert("रोल नंबर दर्ज करें!");
-
+            if(!roll) return alert("रोल नंबर डालें!");
             try {
-                if(localStorage.getItem('student_' + roll)) {
-                    if(confirm("क्या आप डिलीट करना चाहते हैं?")) {
-                        localStorage.removeItem('student_' + roll);
-                        alert("डेटा डिलीट हो गया।");
-                        document.getElementById('delete-stud-roll').value = "";
-                    }
-                } else {
-                    alert("रोल नंबर नहीं मिला।");
-                }
+                localStorage.removeItem('student_' + roll);
+                alert("छात्र डिलीट हो गया!");
             } catch(e){}
-        }
-
-        function clearAllData() {
-            if(confirm("क्या आप पूरा डेटा साफ़ करना चाहते हैं?")) {
-                try { localStorage.clear(); } catch(e){}
-                alert("पोर्टल साफ़ कर दिया गया है।");
-                location.reload();
-            }
-        }
-
-        function base64ToBlobUrl(base64Data) {
-            try {
-                if(!base64Data) return null;
-                const parts = base64Data.split(';base64,');
-                if(parts.length < 2) return null;
-                const contentType = parts[0].split(':')[1];
-                const raw = window.atob(parts[1]);
-                const rawLength = raw.length;
-                const uInt8Array = new Uint8Array(rawLength);
-                for (let i = 0; i < rawLength; ++i) {
-                    uInt8Array[i] = raw.charCodeAt(i);
-                }
-                return URL.createObjectURL(new Blob([uInt8Array], {type: contentType}));
-            } catch (e) {
-                return null;
-            }
         }
 
         function setupStudentDashboard(data) {
@@ -516,31 +428,36 @@
                 document.getElementById('display-profile-pic').src = data.photo;
                 document.getElementById('display-profile-pic').classList.remove('hidden');
                 document.getElementById('profile-status').classList.add('hidden');
-            } else {
-                document.getElementById('display-profile-pic').classList.add('hidden');
-                document.getElementById('profile-status').classList.remove('hidden');
             }
-
-            const pdfContainer = document.getElementById('pdf-container');
             if(data.pdf) {
-                const blobUrl = base64ToBlobUrl(data.pdf);
-                if(blobUrl) {
-                    pdfContainer.innerHTML = `<object data="${blobUrl}" type="application/pdf">
-                        <embed src="${blobUrl}" type="application/pdf" />
-                        <p>PDF डाउनलोड करें: <a href="${blobUrl}" target="_blank">यहाँ क्लिक करें</a></p>
-                    </object>`;
-                    pdfContainer.classList.remove('hidden');
+                try {
+                    const parts = data.pdf.split(';base64,');
+                    const contentType = parts[0].split(':')[1];
+                    const raw = window.atob(parts[1]);
+                    const uInt8Array = new Uint8Array(raw.length);
+                    for (let i = 0; i < raw.length; ++i) uInt8Array[i] = raw.charCodeAt(i);
+                    const blobUrl = URL.createObjectURL(new Blob([uInt8Array], {type: contentType}));
+                    
+                    document.getElementById('pdf-container').innerHTML = `<object data="${blobUrl}" type="application/pdf"><embed src="${blobUrl}" type="application/pdf" /></object>`;
+                    document.getElementById('pdf-container').classList.remove('hidden');
                     document.getElementById('result-status').classList.add('hidden');
-                } else {
-                    document.getElementById('result-status').innerText = "रेंडर एरर।";
-                }
-            } else {
-                pdfContainer.classList.add('hidden');
-                document.getElementById('result-status').classList.remove('hidden');
+                } catch(e){}
             }
-            switchTab('profile');
         }
 
         function switchTab(tabName) {
             if(tabName === 'profile') {
-                document.getElementById('profile-content').classList.remo
+                document.getElementById('profile-content').classList.remove('hidden');
+                document.getElementById('result-content').classList.add('hidden');
+                document.getElementById('btn-profile').classList.add('active');
+                document.getElementById('btn-result').classList.remove('active');
+            } else {
+                document.getElementById('profile-content').classList.add('hidden');
+                document.getElementById('result-content').classList.remove('hidden');
+                document.getElementById('btn-profile').classList.remove('active');
+                document.getElementById('btn-result').classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>
