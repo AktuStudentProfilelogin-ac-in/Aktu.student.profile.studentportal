@@ -12,7 +12,6 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* डिफ़ॉल्ट बैकग्राउंड सेटिंग - जो एडमिन द्वारा बाद में बदली जा सकती है */
         body {
             background-color: #d2e1eb;
             min-height: 100vh;
@@ -36,7 +35,7 @@
             background-size: cover;
             background-position: center;
             z-index: 100;
-            display: block; /* शुरुआत में यही दिखेगा */
+            display: block;
         }
 
         /* थ्री पैरेलल लाइन्स (Hamburger) */
@@ -61,11 +60,16 @@
             background: white;
             border-radius: 4px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            display: none;
+            display: none; /* डिफ़ॉल्ट रूप से बंद */
             flex-direction: column;
             width: 160px;
             z-index: 101;
             overflow: hidden;
+        }
+
+        /* मोबाइल पर मेनू को दिखाने के लिए क्लास */
+        .menu-box.show-menu {
+            display: flex !important;
         }
 
         .menu-box button {
@@ -258,15 +262,19 @@
 </head>
 <body>
 
+    <!-- 1. फ्रंट/लैंडिंग पेज -->
     <div id="front-page">
+        <!-- थ्री पैरेलल लाइन्स मेनू आइकॉन -->
         <div class="menu-icon" onclick="toggleMenu(event)">&#9776;</div>
         
+        <!-- ड्रॉपडाउन ऑप्शन्स बॉक्स -->
         <div class="menu-box" id="dropdown-menu">
             <button onclick="navigateTo('student')">Student Login</button>
             <button onclick="navigateTo('admin')">College Login</button>
         </div>
     </div>
 
+    <!-- 2. लॉगिन कार्ड सेक्शन -->
     <div id="login-card" class="container" style="display: none;">
         <div class="logo-placeholder" id="portal-logo-view">AKTU</div>
         <h2 id="portal-name-view">AKTU ERP Portal</h2>
@@ -291,6 +299,7 @@
         </div>
     </div>
 
+    <!-- 3. स्टूडेंट डैशबोर्ड सेक्शन -->
     <div id="student-dashboard" class="container dashboard" style="display: none;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <h3 id="dash-student-title">Student Dashboard</h3>
@@ -316,6 +325,7 @@
         </div>
     </div>
 
+    <!-- 4. एडमिन डैशबोर्ड सेक्शन -->
     <div id="admin-dashboard" class="container dashboard" style="display: none;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <h3>Admin Panel Control</h3>
@@ -378,29 +388,27 @@
     </div>
 
     <script>
-        // ड्रॉपडाउन मेनू खोलने/बंद करने का फंक्शन
+        // नए क्लास-बेस्ड टॉगल फंक्शन (मोबाइल फ्रेंडली)
         function toggleMenu(event) {
-            event.stopPropagation();
+            if (event) event.stopPropagation();
             const menu = document.getElementById('dropdown-menu');
-            if (menu.style.display === 'flex') {
-                menu.style.display = 'none';
-            } else {
-                menu.style.display = 'flex';
+            menu.classList.toggle('show-menu');
+        }
+
+        // बाहर कहीं भी क्लिक करने पर मेनू बंद होना
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('dropdown-menu');
+            const menuIcon = document.querySelector('.menu-icon');
+            if (menu && !menu.contains(event.target) && event.target !== menuIcon) {
+                menu.classList.remove('show-menu');
             }
-        }
+        });
 
-        // बाहर क्लिक करने पर मेनू बंद होना
-        window.onclick = function() {
-            document.getElementById('dropdown-menu').style.display = 'none';
-        }
-
-        // नेविगेशन कंट्रोलर (Student/Admin स्क्रीन स्विच)
         function navigateTo(panel) {
             document.getElementById('front-page').style.display = 'none';
             document.getElementById('login-card').style.display = 'block';
             
             if(panel === 'admin') {
-                // कॉलेज लॉगिन के लिए हिंट या सीधे एडमिन मोड क्रेडेंशियल मांगेगा
                 document.getElementById('username').value = 'Admin';
                 document.getElementById('password').value = '';
                 document.getElementById('password').focus();
@@ -411,17 +419,13 @@
             }
         }
 
-        // डेटा और इमेजेस लोड करने की प्रारंभिक सेटिंग्स
         try {
             const savedName = localStorage.getItem('siteName') || "AKTU ERP Portal";
             const savedLogo = localStorage.getItem('siteLogo');
             const savedFrontBg = localStorage.getItem('frontPageBg') || "https://images.unsplash.com/photo-1562774053-701939374585?q=80&w=1000";
             const savedGlobalBg = localStorage.getItem('globalPageBg') || "linear-gradient(rgba(210, 225, 235, 0.85), rgba(210, 225, 235, 0.85)), url('https://images.unsplash.com/photo-1562774053-701939374585?q=80&w=1000')";
 
-            // फ्रंट पेज वॉलपेपर सेट करें
             document.getElementById('front-page').style.backgroundImage = `url('${savedFrontBg}')`;
-            
-            // ग्लोबल बैकग्राउंड (बाकी पेजों के लिए) सेट करें
             document.body.style.backgroundImage = savedGlobalBg.includes('linear-gradient') ? savedGlobalBg : `linear-gradient(rgba(210, 225, 235, 0.85), rgba(210, 225, 235, 0.85)), url('${savedGlobalBg}')`;
 
             document.getElementById('portal-name-view').innerText = savedName;
@@ -430,7 +434,6 @@
             if(savedLogo) document.getElementById('portal-logo-view').innerHTML = `<img src="${savedLogo}">`;
         } catch(e){}
 
-        // लॉगिन हैंडलर
         document.getElementById('login-submit-btn').onclick = function() {
             const user = document.getElementById('username').value.trim();
             const pass = document.getElementById('password').value.trim();
@@ -471,7 +474,6 @@
             }
         };
 
-        // एडमिन सेटिंग्स सेव करने का फंक्शन (सारे इमेजेस यहीं से सेव होंगे)
         function saveGlobalSettings() {
             const nameInput = document.getElementById('input-site-name').value;
             const logoFile = document.getElementById('input-site-logo').files[0];
@@ -482,7 +484,6 @@
                 if(nameInput) localStorage.setItem('siteName', nameInput);
             } catch(e){}
 
-            // प्रोमिस की मदद से एक के बाद एक फाइल रीड करना ताकि क्रैश न हो
             const readFile = (file) => {
                 return new Promise((resolve) => {
                     if (!file) resolve(null);
@@ -506,7 +507,6 @@
             });
         }
 
-        // स्टूडेंट डेटा सेव करना
         function saveStudentData() {
             const roll = document.getElementById('stud-roll').value.trim();
             const pass = document.getElementById('stud-pass').value.trim();
@@ -536,4 +536,7 @@
                 r1.readAsDataURL(photoFile);
             } else if(photoFile) {
                 let r1 = new FileReader();
-                r1.onload = function(e){ studentObj.photo = e.targ
+                r1.onload = function(e){ studentObj.photo = e.target.result; finalSave(); }
+                r1.readAsDataURL(photoFile);
+            } else if(pdfFile) {
+        
