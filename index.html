@@ -4,273 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="site-title-tag">AKTU ERP Portal</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: #d2e1eb;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            position: relative;
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
-
-        /* 1. फ्रंट/लैंडिंग पेज स्टाइल */
-        #front-page {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-size: cover;
-            background-position: center;
-            z-index: 100;
-            display: block;
-        }
-
-        /* थ्री पैरेलल लाइन्स (Hamburger) */
-        .menu-icon {
-            position: absolute;
-            top: 20px;
-            right: 25px;
-            font-size: 35px;
-            color: white;
-            cursor: pointer;
-            text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
-            user-select: none;
-            z-index: 102;
-            line-height: 1;
-        }
-
-        /* ड्रॉपडाउन बॉक्स */
-        .menu-box {
-            position: absolute;
-            top: 60px;
-            right: 25px;
-            background: white;
-            border-radius: 4px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            display: none; /* डिफ़ॉल्ट रूप से बंद */
-            flex-direction: column;
-            width: 160px;
-            z-index: 101;
-            overflow: hidden;
-        }
-
-        /* मोबाइल पर मेनू को दिखाने के लिए क्लास */
-        .menu-box.show-menu {
-            display: flex !important;
-        }
-
-        .menu-box button {
-            background: none;
-            border: none;
-            padding: 12px 15px;
-            text-align: left;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            color: #333;
-            transition: background 0.2s;
-        }
-
-        .menu-box button:hover {
-            background: #f1f1f1;
-            color: #800000;
-        }
-
-        /* कंटेनर्स और डैशबोर्ड */
-        .container {
-            background: #ffffff;
-            width: 100%;
-            max-width: 420px;
-            padding: 30px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-            text-align: center;
-            z-index: 10;
-        }
-
-        .logo-placeholder {
-            width: 80px;
-            height: 80px;
-            background: #800000;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            margin: 0 auto 15px auto;
-            font-size: 24px;
-            overflow: hidden;
-        }
-        .logo-placeholder img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        h2 {
-            color: #333333;
-            margin-bottom: 25px;
-            font-size: 22px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-            text-align: left;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 13px;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #444;
-        }
-
-        input[type="text"], input[type="password"], input[type="file"] {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 2px;
-            font-size: 14px;
-            color: #333;
-        }
-
-        .captcha-box {
-            background: #f9f9f9;
-            border: 1px solid #d3d3d3;
-            padding: 10px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            gap: 10px;
-            font-size: 13px;
-        }
-
-        .btn {
-            width: 100%;
-            background: #800000;
-            color: white;
-            border: none;
-            padding: 12px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 2px;
-            transition: background 0.2s;
-        }
-
-        .btn:hover {
-            background: #600000;
-        }
-
-        .btn-secondary {
-            background: #555;
-            margin-top: 10px;
-        }
-
-        .btn-danger {
-            background: #d9534f;
-            margin-top: 5px;
-        }
-
-        .footer-note {
-            margin-top: 20px;
-            font-size: 12px;
-            color: #666;
-        }
-
-        .footer-note a {
-            color: #800000;
-            text-decoration: none;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .dashboard {
-            max-width: 600px;
-            width: 100%;
-            background: white;
-            padding: 25px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-        }
-
-        .nav-tabs {
-            display: flex;
-            border-bottom: 2px solid #800000;
-            margin-bottom: 20px;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 12px;
-            background: #f1f1f1;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .tab-btn.active {
-            background: #800000;
-            color: white;
-        }
-
-        .content-area {
-            min-height: 250px;
-            padding: 15px;
-            border: 1px solid #eee;
-            background: #fafafa;
-        }
-
-        .profile-img {
-            max-width: 200px;
-            max-height: 200px;
-            object-fit: cover;
-            border: 3px solid #800000;
-            margin-top: 15px;
-        }
-
-        object {
-            width: 100%;
-            height: 450px;
-            border: 1px solid #ccc;
-        }
-
-        .admin-box {
-            text-align: left;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px dashed #ccc;
-        }
-    </style>
+    <!-- CSS फ़ाइल को जोड़ना -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <!-- 1. फ्रंट/लैंडिंग पेज -->
     <div id="front-page">
         <!-- थ्री पैरेलल लाइन्स मेनू आइकॉन -->
-        <div class="menu-icon" onclick="toggleMenu(event)">&#9776;</div>
+        <div class="menu-icon" id="menu-trigger">&#9776;</div>
         
         <!-- ड्रॉपडाउन ऑप्शन्स बॉक्स -->
         <div class="menu-box" id="dropdown-menu">
-            <button onclick="navigateTo('student')">Student Login</button>
-            <button onclick="navigateTo('admin')">College Login</button>
+            <button id="opt-student">Student Login</button>
+            <button id="opt-admin">College Login</button>
         </div>
     </div>
 
@@ -353,7 +100,7 @@
                 <label style="color: #800000;">बाकी पेजों के लिए बैकग्राउंड इमेज (Global Background):</label>
                 <input type="file" id="input-global-bg" accept="image/*">
             </div>
-            <button class="btn btn-secondary" onclick="saveGlobalSettings()">पोर्टल सेटिंग्स सेव करें</button>
+            <button class="btn btn-secondary" id="save-settings-btn">पोर्टल सेटिंग्स सेव करें</button>
         </div>
 
         <div class="admin-box" style="margin-top:25px;">
@@ -374,7 +121,7 @@
                 <label>स्टूडेंट का रिजल्ट (PDF) अपलोड करें:</label>
                 <input type="file" id="stud-pdf" accept="application/pdf">
             </div>
-            <button class="btn" onclick="saveStudentData()">स्टूडेंट डेटा अपलोड/सेव करें</button>
+            <button class="btn" id="save-student-btn">स्टूडेंट डेटा अपलोड/सेव करें</button>
         </div>
 
         <div class="admin-box" style="margin-top:25px; border-top: 1px solid red;">
@@ -383,160 +130,11 @@
                 <label>डिलीट करने वाले स्टूडेंट का रोल नंबर:</label>
                 <input type="text" id="delete-stud-roll" placeholder="उदा. 12345">
             </div>
-            <button class="btn btn-danger" style="background:#d9534f;" onclick="deleteStudentData()">स्टूडेंट डेटा हमेशा के लिए डिलीट करें</button>
+            <button class="btn btn-danger" style="background:#d9534f;" id="delete-student-btn">स्टूडेंट डेटा हमेशा के लिए डिलीट करें</button>
         </div>
     </div>
 
-    <script>
-        // नए क्लास-बेस्ड टॉगल फंक्शन (मोबाइल फ्रेंडली)
-        function toggleMenu(event) {
-            if (event) event.stopPropagation();
-            const menu = document.getElementById('dropdown-menu');
-            menu.classList.toggle('show-menu');
-        }
-
-        // बाहर कहीं भी क्लिक करने पर मेनू बंद होना
-        document.addEventListener('click', function(event) {
-            const menu = document.getElementById('dropdown-menu');
-            const menuIcon = document.querySelector('.menu-icon');
-            if (menu && !menu.contains(event.target) && event.target !== menuIcon) {
-                menu.classList.remove('show-menu');
-            }
-        });
-
-        function navigateTo(panel) {
-            document.getElementById('front-page').style.display = 'none';
-            document.getElementById('login-card').style.display = 'block';
-            
-            if(panel === 'admin') {
-                document.getElementById('username').value = 'Admin';
-                document.getElementById('password').value = '';
-                document.getElementById('password').focus();
-            } else {
-                document.getElementById('username').value = '';
-                document.getElementById('password').value = '';
-                document.getElementById('username').focus();
-            }
-        }
-
-        try {
-            const savedName = localStorage.getItem('siteName') || "AKTU ERP Portal";
-            const savedLogo = localStorage.getItem('siteLogo');
-            const savedFrontBg = localStorage.getItem('frontPageBg') || "https://images.unsplash.com/photo-1562774053-701939374585?q=80&w=1000";
-            const savedGlobalBg = localStorage.getItem('globalPageBg') || "linear-gradient(rgba(210, 225, 235, 0.85), rgba(210, 225, 235, 0.85)), url('https://images.unsplash.com/photo-1562774053-701939374585?q=80&w=1000')";
-
-            document.getElementById('front-page').style.backgroundImage = `url('${savedFrontBg}')`;
-            document.body.style.backgroundImage = savedGlobalBg.includes('linear-gradient') ? savedGlobalBg : `linear-gradient(rgba(210, 225, 235, 0.85), rgba(210, 225, 235, 0.85)), url('${savedGlobalBg}')`;
-
-            document.getElementById('portal-name-view').innerText = savedName;
-            document.getElementById('site-title-tag').innerText = savedName;
-            document.getElementById('input-site-name').value = savedName;
-            if(savedLogo) document.getElementById('portal-logo-view').innerHTML = `<img src="${savedLogo}">`;
-        } catch(e){}
-
-        document.getElementById('login-submit-btn').onclick = function() {
-            const user = document.getElementById('username').value.trim();
-            const pass = document.getElementById('password').value.trim();
-            const captchaChecked = document.getElementById('captcha').checked;
-
-            if(!user || !pass) {
-                alert("कृपया यूजर आईडी और पासवर्ड डालें!");
-                return;
-            }
-            if(!captchaChecked) {
-                alert("कृपया रीकैप्चा टिक करें!");
-                return;
-            }
-
-            if(user === "Admin" && pass === "Manvendra#1234") {
-                document.getElementById('login-card').style.display = 'none';
-                document.getElementById('admin-dashboard').style.display = 'block';
-                return;
-            }
-
-            try {
-                const studentDataStr = localStorage.getItem('student_' + user);
-                if(studentDataStr) {
-                    const studentData = JSON.parse(studentDataStr);
-                    if(studentData.password === pass) {
-                        document.getElementById('login-card').style.display = 'none';
-                        document.getElementById('student-dashboard').style.display = 'block';
-                        document.getElementById('dash-student-title').innerText = "रोल नंबर: " + user;
-                        setupStudentDashboard(studentData);
-                    } else {
-                        alert("गलत पासवर्ड!");
-                    }
-                } else {
-                    alert("यह रोल नंबर मौजूद नहीं है।");
-                }
-            } catch (error) {
-                alert("लॉगिन एरर उत्पन्न हुआ!");
-            }
-        };
-
-        function saveGlobalSettings() {
-            const nameInput = document.getElementById('input-site-name').value;
-            const logoFile = document.getElementById('input-site-logo').files[0];
-            const frontBgFile = document.getElementById('input-front-bg').files[0];
-            const globalBgFile = document.getElementById('input-global-bg').files[0];
-
-            try {
-                if(nameInput) localStorage.setItem('siteName', nameInput);
-            } catch(e){}
-
-            const readFile = (file) => {
-                return new Promise((resolve) => {
-                    if (!file) resolve(null);
-                    const reader = new FileReader();
-                    reader.onloadend = () => resolve(reader.result);
-                    reader.readAsDataURL(file);
-                });
-            };
-
-            Promise.all([readFile(logoFile), readFile(frontBgFile), readFile(globalBgFile)]).then(([logoData, frontData, globalData]) => {
-                try {
-                    if (logoData) localStorage.setItem('siteLogo', logoData);
-                    if (frontData) localStorage.setItem('frontPageBg', frontData);
-                    if (globalData) localStorage.setItem('globalPageBg', globalData);
-                    
-                    alert("पोर्टल सेटिंग्स और इमेजेस सुरक्षित कर दिए गए हैं!");
-                    location.reload();
-                } catch(e) {
-                    alert("त्रुटि: इमेज फ़ाइल साइज बहुत बड़ी है (कृपया कम साइज की इमेज डालें)!");
-                }
-            });
-        }
-
-        function saveStudentData() {
-            const roll = document.getElementById('stud-roll').value.trim();
-            const pass = document.getElementById('stud-pass').value.trim();
-            const photoFile = document.getElementById('stud-photo').files[0];
-            const pdfFile = document.getElementById('stud-pdf').files[0];
-
-            if(!roll || !pass) return alert("रोल नंबर और पासवर्ड भरें!");
-
-            let studentObj = { password: pass, photo: "", pdf: "" };
-            try {
-                let existing = localStorage.getItem('student_' + roll);
-                if(existing) studentObj = JSON.parse(existing);
-            } catch(e){}
-            studentObj.password = pass;
-
-            const finalSave = () => {
-                try {
-                    localStorage.setItem('student_' + roll, JSON.stringify(studentObj));
-                    alert(`छात्र ${roll} का डेटा सुरक्षित हुआ!`);
-                } catch(e){ alert("फ़ाइल साइज बहुत बड़ा है!"); }
-            };
-
-            if(photoFile && pdfFile) {
-                let r1 = new FileReader(), r2 = new FileReader();
-                r1.onload = function(e){ studentObj.photo = e.target.result; r2.readAsDataURL(pdfFile); }
-                r2.onload = function(e){ studentObj.pdf = e.target.result; finalSave(); }
-                r1.readAsDataURL(photoFile);
-            } else if(photoFile) {
-                let r1 = new FileReader();
-                r1.onload = function(e){ studentObj.photo = e.target.result; finalSave(); }
-                r1.readAsDataURL(photoFile);
-            } else if(pdfFile) {
-        
+    <!-- JavaScript फ़ाइल को जोड़ना -->
+    <script src="script.js"></script>
+</body>
+</html>
